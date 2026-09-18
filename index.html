@@ -279,8 +279,9 @@ function sectionHead(g,count){
 function colHeader(){
   return `<div class="bcols"><span>อันดับ</span><span>Class</span><span>Team Name</span><span class="num">Highscore Point</span><span class="num">Clear Time</span></div>`;
 }
-function rowHtml(r,rank,grouped){
-  const rk = rank<=3 ? `<span class="medal m${rank}">${rank}</span>` : `<span class="rank">${rank}</span>`;
+function rowHtml(r,grouped){
+  const rank=r.rank||0;
+  const rk = rank>=1&&rank<=3 ? `<span class="medal m${rank}">${rank}</span>` : `<span class="rank">${rank}</span>`;
   const srvtag=(!grouped&&r.server&&r.server!=="All")?`<span class="srvtag">${esc(r.server)}</span>`:"";
   return `<div class="brow${rank===1?' top1':''}">
     <div class="c-rank">${rk}</div>
@@ -298,7 +299,7 @@ function buildSeq(recs,p){
     list.sort((a,b)=>b.score-a.score||toSec(a.time)-toSec(b.time));
     seq.push(sectionHead(g,list.length));
     seq.push(colHeader());
-    list.forEach((r,i)=>seq.push(rowHtml(r,i+1,p.grouped)));
+    list.forEach(r=>seq.push(rowHtml(r,p.grouped)));
   }
   return seq;
 }
@@ -346,5 +347,17 @@ function onScrollTop(){ if(window.scrollY>420) toTopBtn.classList.add("show"); e
 window.addEventListener("scroll",onScrollTop,{passive:true});
 toTopBtn.addEventListener("click",()=>{const rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;window.scrollTo({top:0,behavior:rm?"auto":"smooth"});});
 onScrollTop();
+function computeRanks(){
+  for(const p of PRIZES){
+    const recs=prizeRecs(p.id);
+    const groups = p.grouped ? [...new Set(recs.map(r=>r.server))] : ["__all__"];
+    for(const g of groups){
+      const list=(g==="__all__"?recs.slice():recs.filter(r=>r.server===g))
+        .sort((a,b)=>b.score-a.score||toSec(a.time)-toSec(b.time));
+      list.forEach((r,i)=>{r.rank=i+1;});
+    }
+  }
+}
+computeRanks();
 buildHeroMeta();buildPrizeTabs();buildControls();render();
 </script>
