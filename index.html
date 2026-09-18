@@ -259,8 +259,7 @@ function rewardPanel(pid){
       <div class="row2"><span class="amt"><span class="x">×</span>${esc(it.amt)}</span>
         <span class="badge-trade">✕ เทรดไม่ได้</span></div></div></div>`).join("");
   return `<section class="rewards" style="--tone:var(--tone-${pid})">
-    <div class="rw-head"><div class="rw-t">🎁 ของรางวัล ${esc(p.name)} ${amt}</div>
-      <span class="rw-sub">${esc(p.sub)}</span></div>
+    <div class="rw-head"><div class="rw-t">🎁 ของรางวัล ${esc(p.name)} ${amt}</div></div>
     <div class="rw-grid">${cells}</div></section>`;
 }
 
